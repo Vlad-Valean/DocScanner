@@ -1,0 +1,15 @@
+﻿@model IFormFile
+
+@{
+    ViewData["Title"] = "Upload Romanian ID";
+}
+
+<h2>Upload Romanian ID</h2>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="photo">ID Photo:</label>
+        <input type="file" name="photo" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+</form>

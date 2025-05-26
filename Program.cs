@@ -2,6 +2,9 @@ using DocScanner.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using DocScanner.Services;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 // Add MVC support
 builder.Services.AddControllersWithViews();
+
+// Add OCR support
+builder.Services.AddScoped<IOcrService, TesseractOcrService>();
 
 var app = builder.Build();
 
