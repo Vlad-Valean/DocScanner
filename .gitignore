@@ -52,3 +52,17 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Rider / JetBrains (if using JetBrains IDEs)
+.idea/
+
+# User secrets (local dev only)
+**/secrets.json
+
+# Docker-related
+**/docker-compose.override.yml
+**/.dockerignore
+
+# Database files (just in case)
+*.sql
+*.db
