@@ -26,15 +26,15 @@ services:
     depends_on:
       - postgres
   
-#  docscanner:
-#    build:
-#      context: .
-#      dockerfile: DocScanner/Dockerfile
-#    container_name: docscanner
-#    ports:
-#      - "8080:80"
-#    depends_on:
-#      - postgres
+  docscanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docscanner
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
