@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Poetry specific
+poetry.lock  # if you want to regenerate inside container
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Git and other VCS
+.git/
+.gitignore
+
+# Docker files (optional)
+.dockerignore
+Dockerfile

@@ -1,58 +1,119 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Login.scss';
-import {Container, FormControl, FormHelperText, Input, InputLabel, Link} from "@mui/material";
-import CustomAlert from "../../Components/CustomAlert/CustomAlert";
-import CustomButton from "../../Components/CustomButton/CustomButton";
-
+import {
+  Container,
+  FormControl,
+  FormHelperText,
+  Input,
+  InputLabel,
+  Link,
+} from '@mui/material';
+import CustomAlert from '../../Components/CustomAlert/CustomAlert';
+import CustomButton from '../../Components/CustomButton/CustomButton';
+import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
 function Login() {
+  const API_URL = 'http://localhost:5099/auth';
+
+  async function loginUser(email: string, password: string) {
+    try {
+      const response = await axios.post(`${API_URL}/login`, {
+        email,
+        password,
+      });
+
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+
+      return { success: true, token };
+    } catch (error: any) {
+      console.error('Login failed:', error.response?.data || error.message);
+      return {
+        success: false,
+        message: error.response?.data || 'Login failed',
+      };
+    }
+  }
+
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = await loginUser(email, password);
+    if (!result.success) {
+      setError(result.message);
+      setSuccess(false);
+    } else {
+      setError('');
+      setSuccess(true);
+      navigate('/');
+      alert('Login successful!');
+    }
+  };
+
   return (
-    <>
-        <Container fixed className="Login d-flex flex-column justify-content-center align-content-center">
-            <h1 className="m-4">LOGIN</h1>
-            <div className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">
-              <FormControl variant="standard">
-                  <InputLabel htmlFor="component-helper">Name</InputLabel>
-                  <Input
-                    id="component-helper"
-                    defaultValue=""
-                    aria-describedby="component-helper-text"
-                  />
-                  <FormHelperText id="component-helper-text">
-                    Some important helper text
-                  </FormHelperText>
-                </FormControl>
-                <FormControl variant="standard">
-                    <InputLabel htmlFor="component-helper">Name</InputLabel>
-                    <Input
-                      id="component-helper"
-                      defaultValue=""
-                      aria-describedby="component-helper-text"
-                    />
-                    <FormHelperText id="component-helper-text">
-                      Some important helper text
-                    </FormHelperText>
-                  </FormControl>
-              </div>
-              <div className="d-flex flex-column justify-content-between align-content-center w-25 m-auto my-3">
-                <CustomButton text={"Login"} className="w-50 m-auto mb-3"></CustomButton>
-                <Link href="/register" underline="hover">
-                  You don't have an account, then you can register here
-                </Link>
+    <Container fixed className="Login d-flex flex-column justify-content-center align-content-center">
+      <h1 className="m-4">LOGIN</h1>
+      <form onSubmit={handleLogin}>
+        <div className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">
+          <FormControl variant="standard" className="mb-4">
+            <InputLabel htmlFor="email-input">Email</InputLabel>
+            <Input
+              id="email-input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-describedby="email-helper"
+              required
+            />
+            <FormHelperText id="email-helper">
+              Enter your email address
+            </FormHelperText>
+          </FormControl>
 
-              </div>
+          <FormControl variant="standard">
+            <InputLabel htmlFor="password-input">Password</InputLabel>
+            <Input
+              id="password-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-describedby="password-helper"
+              required
+            />
+            <FormHelperText id="password-helper">
+              Enter your password
+            </FormHelperText>
+          </FormControl>
+        </div>
 
+        <div className="d-flex flex-column justify-content-between align-content-center w-25 m-auto my-3">
+          <CustomButton
+            text={'Login'}
+            className="w-50 m-auto mb-3"
+            type="submit"
+          />
 
+          <Link href="/register" underline="hover">
+            You don't have an account? Register here.
+          </Link>
+        </div>
+      </form>
 
-              {false ??
-                <CustomAlert
-                  response={true}
-                  successResponse={"Succesfully registered"}
-                  errorResponse={"Error"}
-                />}
-
-        </Container>
-    </>
+      {(error || success) && (
+        <CustomAlert
+          response={success}
+          successResponse={'Successfully logged in'}
+          errorResponse={"Error occurred"}
+        />
+      )}
+    </Container>
   );
 }
 

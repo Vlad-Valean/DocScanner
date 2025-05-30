@@ -8,6 +8,7 @@ import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import ReviewerDashboard from "./Pages/ReviewerDashboard/ReviewerDashboard";
 import { Navigate } from "react-router-dom";
+import UploadPage from "./Pages/UploadPage/UploadPage";
 
 type PrivateRouteProps = {
   children: JSX.Element;
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><ReviewerDashboard /></PrivateRoute>} />
         </Routes>
     </div>

@@ -32,7 +32,7 @@ public class UserApiController : ControllerBase
         await using var stream = photo.OpenReadStream();
         content.Add(new StreamContent(stream), "photo", photo.FileName);
 
-        var response = await client.PostAsync("http://ocrmicroservice:8000/ocr", content);
+        var response = await client.PostAsync("http://localhost:8000/ocr", content);
         if (!response.IsSuccessStatusCode)
             return StatusCode(500, "Failed to OCR image.");
 

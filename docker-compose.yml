@@ -12,9 +12,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - docscanner-net
 
   pgadmin:
-    image: dpage/pgadmin4:9.3.0
+    image: dpage/pgadmin4:9.4.0
     container_name: pgadmin
     restart: always
     environment:
@@ -24,7 +26,21 @@ services:
       - "5050:80"
     depends_on:
       - postgres
+    networks:
+      - docscanner-net
 
+  docscanner-ocr:
+    build:
+      context: ./ocrmicroservice
+      dockerfile: Dockerfile
+    container_name: docscanner-ocr
+    ports:
+      - "8000:8000"
+    restart: always
+    networks:
+      - docscanner-net
+
+# Uncomment and customize when ready
 #  docscanner-backend:
 #    build:
 #      context: ./backend
@@ -35,15 +51,8 @@ services:
 #    depends_on:
 #      - postgres
 #      - docscanner-ocr
-
-  docscanner-ocr:
-    build:
-      context: ./ocrmicroservice
-      dockerfile: Dockerfile
-    container_name: docscanner-ocr
-    ports:
-      - "8000:8000"
-    restart: always
+#    networks:
+#      - docscanner-net
 
 #  docscanner-frontend:
 #    build:
@@ -55,6 +64,11 @@ services:
 #    restart: always
 #    depends_on:
 #      - docscanner-backend
+#    networks:
+#      - docscanner-net
 
 volumes:
   postgres_data:
+
+networks:
+  docscanner-net:

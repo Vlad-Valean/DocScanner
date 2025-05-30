@@ -1,0 +1,21 @@
+    [tool.poetry]
+    name = "ocrmicroservice"
+    version = "0.1.0"
+    description = "OCR microservice with FastAPI + EasyOCR"
+    authors = ["You <you@example.com>"]
+    package-mode = false
+
+    [tool.poetry.dependencies]
+    python = "^3.11"
+    fastapi = "^0.110.0"
+    uvicorn = "^0.29.0"
+    easyocr = "^1.7.1"
+    pillow = "^10.0.1"
+    numpy = "^1.26.0"
+    python-multipart = "^0.0.9"
+#    torch = "^2.0.1"
+#    torchvision = "^0.15.2"
+
+    [build-system]
+    requires = ["poetry-core"]
+    build-backend = "poetry.core.masonry.api"
