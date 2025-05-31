@@ -14,25 +14,34 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-type Role = 'user' | 'reviewer' | 'admin';
+type Role = 'User' | 'Reviewer' | 'Admin' | null;
+
+type Setting = {
+  name: string;
+  path: string;
+  roles: Role[];
+};
 
 type NavProps = {
   role: Role;
+  isAuthenticated: boolean;
 };
 
 const allPages = [
-  { name: 'Home', path: '/' },
-  { name: 'Upload', path: '/upload' }
+  { name: 'Home', path: '/', roles: [] },
+  { name: 'Upload', path: '/upload', roles: ['User'] },
+  { name: 'Reviewer Dashboard', path: '/dashboard', roles: ['Reviewer', 'Admin'] },
 ];
 
-const allSettings = [
-  { name: 'Dashboard', path: '/dashboard', roles: ['reviewer', 'admin'] },
-  { name: 'Login', path: '/login', roles: ['user', 'reviewer', 'admin'] },
-  { name: 'Register', path: '/register', roles: ['user', 'reviewer', 'admin'] },
-  { name: 'Logout', path: '/logout', roles: ['user', 'reviewer', 'admin'] }
+const allSettings: Setting[] = [
+  { name: 'Dashboard', path: '/dashboard', roles: ['Reviewer', 'Admin'] },
+  { name: 'Login', path: '/login', roles: [] },
+  { name: 'Register', path: '/register', roles: [] },
+  { name: 'Logout', path: '/logout', roles: ['User', 'Reviewer', 'Admin'] }
 ];
 
-function Nav({ role }: NavProps) {
+function Nav({ role, isAuthenticated }: NavProps) {
+  const username = localStorage.getItem('username');
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -53,11 +62,36 @@ function Nav({ role }: NavProps) {
     setAnchorElUser(null);
   };
 
-  const filteredSettings = allSettings.filter(setting => setting.roles.includes(role));
+  const handleMenuClick = (path: string) => {
+    if (path === '/logout') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('username');
+      navigate('/');
+      window.location.reload();
+    } else {
+      navigate(path);
+    }
+  };
+
+
+  const filteredPages = allPages.filter(p =>
+    !p.roles || (role && p.roles.includes(role))
+  );
+
+  const filteredSettings = allSettings.filter(setting =>
+    !isAuthenticated
+      ? setting.name === 'Login' || setting.name === 'Register'
+      : role && setting.roles.includes(role)
+  );
+
+  console.log('isAuthenticated:', isAuthenticated);
+  console.log('role:', role);
+  console.log('filteredSettings:', filteredSettings);
 
   return (
-    <AppBar position="static" color="default">
-      <Container fixed>
+    <AppBar position="fixed" color="default">
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
@@ -78,7 +112,7 @@ function Nav({ role }: NavProps) {
             DOCSCANNER
           </Typography>
 
-          {/* Mobile Nav Menu */}
+          {/* Mobile Nav */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
@@ -91,8 +125,8 @@ function Nav({ role }: NavProps) {
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              {allPages.map((page) => (
-                <MenuItem key={page.name} onClick={() => { handleCloseNavMenu(); navigate(page.path); }}>
+              {filteredPages.map((page) => (
+                <MenuItem key={page.name} onClick={() => { handleCloseNavMenu(); handleMenuClick(page.path); }}>
                   <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
@@ -120,12 +154,12 @@ function Nav({ role }: NavProps) {
             DOCSCANNER
           </Typography>
 
-          {/* Desktop Nav Menu */}
+          {/* Desktop Nav */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {allPages.map((page) => (
+            {filteredPages.map((page) => (
               <Button
                 key={page.name}
-                onClick={() => navigate(page.path)}
+                onClick={() => handleMenuClick(page.path)}
                 sx={{ my: 2, color: 'black', display: 'block' }}
               >
                 {page.name}
@@ -133,7 +167,7 @@ function Nav({ role }: NavProps) {
             ))}
           </Box>
 
-          {/* User Menu */}
+          {/* Avatar Menu */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -148,8 +182,13 @@ function Nav({ role }: NavProps) {
               anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
+              {/*{username && (*/}
+              {/*  <MenuItem disabled>*/}
+              {/*    <Typography textAlign="center"><strong>{username}ceva</strong></Typography>*/}
+              {/*  </MenuItem>*/}
+              {/*)}*/}
               {filteredSettings.map((setting) => (
-                <MenuItem key={setting.name} onClick={() => { handleCloseUserMenu(); navigate(setting.path); }}>
+                <MenuItem key={setting.name} onClick={() => { handleCloseUserMenu(); handleMenuClick(setting.path); }}>
                   <Typography textAlign="center">{setting.name}</Typography>
                 </MenuItem>
               ))}

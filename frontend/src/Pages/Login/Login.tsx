@@ -12,21 +12,32 @@ import CustomAlert from '../../Components/CustomAlert/CustomAlert';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const API_URL = 'http://localhost:5099/auth';
-
   async function loginUser(email: string, password: string) {
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(`${API_URL}/login`, { email, password });
 
-      const token = response.data.token;
+      const { token } = response.data;
+
+      // Decode token to get payload
+
+      const decoded = jwtDecode<any>(token);
+
+      // Usage:const decoded = jwt_decode<any>(token);
+      const roles = decoded.role || decoded.roles || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+      // If roles is an array, you can pick the first role or join them
+      const role = Array.isArray(roles) ? roles[0] : roles;
+
       localStorage.setItem('token', token);
+      localStorage.setItem('role', role || '');
 
-      return { success: true, token };
+      window.dispatchEvent(new Event('storageChanged'));
+
+      return { success: true, token, role };
     } catch (error: any) {
       console.error('Login failed:', error.response?.data || error.message);
       return {
@@ -35,6 +46,7 @@ function Login() {
       };
     }
   }
+
 
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
