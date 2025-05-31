@@ -1,13 +1,20 @@
-import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Paper, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import React from 'react';
 import './Home.scss';
 import UploadIcon from "@mui/icons-material/CloudUpload";
 import SecurityIcon from "@mui/icons-material/Security";
 import SearchIcon from "@mui/icons-material/TravelExplore";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useColorScheme } from '@mui/material/styles';
 
 
 function Home() {
+
+  const { mode, setMode } = useColorScheme();
+  if (!mode) {
+    return null;
+  }
+
   return (
       <>
         <Container fixed className="Home d-flex flex-column justify-content-center align-content-center">
@@ -16,6 +23,23 @@ function Home() {
             <Typography variant="h3" fontWeight="bold" gutterBottom>
                 Scan and Submit Your ID
             </Typography>
+            <FormControl>
+              <FormLabel id="demo-theme-toggle">Theme</FormLabel>
+              <RadioGroup
+                aria-labelledby="demo-theme-toggle"
+                name="theme-toggle"
+                row
+                value={mode}
+                onChange={(event) =>
+                  setMode(event.target.value as 'system' | 'light' | 'dark')
+                }
+              >
+                <FormControlLabel value="system" control={<Radio />} label="System" />
+                <FormControlLabel value="light" control={<Radio />} label="Light" />
+                <FormControlLabel value="dark" control={<Radio />} label="Dark" />
+              </RadioGroup>
+            </FormControl>
+
             <Typography variant="h6" color="textSecondary" gutterBottom>
               Upload your ID photo securely. We’ll extract and review your information.
             </Typography>

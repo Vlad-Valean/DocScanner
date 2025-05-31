@@ -8,6 +8,9 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import ReviewerDashboard from './Pages/ReviewerDashboard/ReviewerDashboard';
 import UploadPage from './Pages/UploadPage/UploadPage';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+
 
 type Role = 'User' | 'Reviewer' | 'Admin' | null;
 
@@ -21,6 +24,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 };
 
 function App() {
+  const theme = createTheme({
+    colorSchemes: {
+      dark: true,
+    },
+  });
+
   const [role, setRole] = useState<Role>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -39,16 +48,18 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <Nav role={role} isAuthenticated={isAuthenticated} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
-        <Route path="/dashboard" element={<PrivateRoute><ReviewerDashboard /></PrivateRoute>} />
-      </Routes>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Nav role={role} isAuthenticated={isAuthenticated} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><ReviewerDashboard /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </ThemeProvider>
   );
 }
 
