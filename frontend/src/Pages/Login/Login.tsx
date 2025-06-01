@@ -70,7 +70,7 @@ function Login() {
   };
 
   return (
-    <Container fixed className="Login d-flex flex-column justify-content-center align-content-center">
+    <Container fixed className="Login d-flex flex-column justify-content-center align-content-center min-vh-100">
       <h1 className="m-4">LOGIN</h1>
       <form onSubmit={handleLogin}>
         <div className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">

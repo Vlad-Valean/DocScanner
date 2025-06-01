@@ -69,7 +69,7 @@ function UploadPage() {
   };
 
   return (
-    <Container fixed className="Upload d-flex flex-column justify-content-center align-content-center">
+    <Container fixed className="Upload d-flex flex-column justify-content-center align-content-center min-vh-100">
       <h1 className="m-4 text-center">UPLOAD ID PHOTO</h1>
       <Box className="m-auto w-50 d-flex flex-column align-items-center" textAlign="center" py={6}>
         <Paper elevation={3} sx={{ p: 3, textAlign: "center" }}>

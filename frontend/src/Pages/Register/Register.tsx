@@ -41,7 +41,7 @@ function Register() {
   };
 
   return (
-    <Container fixed className="Register d-flex flex-column justify-content-center align-content-center">
+    <Container fixed className="Register d-flex flex-column justify-content-center align-content-center min-vh-100">
       <h1 className="m-4">REGISTER</h1>
       <form onSubmit={handleRegister} className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">
         <FormControl variant="standard" margin="normal">
