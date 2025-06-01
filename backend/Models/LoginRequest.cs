@@ -1,4 +1,4 @@
-namespace @_.Models
+namespace DocScanner.Models
 {
     public class LoginRequest
     {

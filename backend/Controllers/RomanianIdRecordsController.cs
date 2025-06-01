@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace @_.Controllers
+namespace DocScanner.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Route("api/RomanianIdRecords")]

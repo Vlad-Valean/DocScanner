@@ -5,9 +5,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using _.Models;
+using DocScanner.Models;
 
-namespace @_.Controllers
+namespace DocScanner.Controllers
 {
     [ApiController]
     [Route("auth")]

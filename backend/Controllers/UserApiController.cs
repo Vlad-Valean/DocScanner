@@ -5,7 +5,7 @@ using DocScanner.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace @_.Controllers;
+namespace DocScanner.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

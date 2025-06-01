@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace _.Migrations
+namespace DocScanner.Migrations
 {
     /// <inheritdoc />
     public partial class AddValiditate : Migration

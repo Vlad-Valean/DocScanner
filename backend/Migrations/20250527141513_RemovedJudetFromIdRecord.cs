@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace _.Migrations
+namespace DocScanner.Migrations
 {
     /// <inheritdoc />
     public partial class RemovedJudetFromIdRecord : Migration

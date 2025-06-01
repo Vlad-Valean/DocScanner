@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -54,6 +55,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCoreAdmin(); // Optional: set admin password
+
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -67,13 +71,50 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
+app.UseCoreAdminCustomAuth(async (serviceProvider) =>
+{
+    var httpContext = serviceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var authHeader = httpContext.Request.Headers["Authorization"].ToString();
+
+    if (authHeader?.StartsWith("Basic ") == true)
+    {
+        var encodedCredentials = authHeader["Basic ".Length..].Trim();
+        var credentialBytes = Convert.FromBase64String(encodedCredentials);
+        var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
+
+        if (credentials.Length == 2)
+        {
+            var username = credentials[0];
+            var password = credentials[1];
+
+            if (username == "admin" && password == "admin")
+            {
+                return true;
+            }
+        }
+    }
+
+    httpContext.Response.Headers["WWW-Authenticate"] = "Basic realm=\"AdminPanel\"";
+    httpContext.Response.StatusCode = 401;
+    await httpContext.Response.WriteAsync("Unauthorized");
+    return false;
+});
+
+app.UseCoreAdminCustomUrl("adminpanel");
+
+
 app.UseCors("AllowReactFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers();
 app.MapRazorPages();
+
+app.UseStaticFiles();
+app.MapDefaultControllerRoute();
 
 app.MapControllerRoute(
     name: "default",
@@ -83,9 +124,6 @@ app.MapControllerRoute(
     name: "auth",
     pattern: "auth/{controller=Auth}/{action=Index}/{id?}");
 
-app.MapControllerRoute(
-    name: "admin",
-    pattern: "api/{controller=AdminPanel}/{action=Index}/{id?}");
-
 app.Logger.LogInformation("✅ Application started and routes are mapped.");
+
 app.Run();
