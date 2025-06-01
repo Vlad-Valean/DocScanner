@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import ThemeSwitch from '../ThemeSwitch/ThemeSwitch'
 
 type Role = 'User' | 'Reviewer' | 'Admin' | null;
 
@@ -166,6 +167,8 @@ function Nav({ role, isAuthenticated }: NavProps) {
               </Button>
             ))}
           </Box>
+
+          <ThemeSwitch/>
 
           {/* Avatar Menu */}
           <Box sx={{ flexGrow: 0 }}>
