@@ -1,13 +1,24 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using DocScanner.Data;
+using DocScanner.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Constants ---
+const string adminUsername = "admin";
+const string adminPassword = "admin";
+const string corsPolicyName = "AllowReactFrontend";
+const string jwtSecret = "Q3VzdG9tU2VjdXJlS2V5MTIzIT8kJV4mKigpXy0r"; // Ideally from config
+
+// --- Claim Mapping Fix ---
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+// --- Add Services ---
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -18,14 +29,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddScoped<IdCardParserService>();
 builder.Services.AddHttpClient();
-
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactFrontend", policy =>
+    options.AddPolicy(corsPolicyName, policy =>
     {
         policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
@@ -33,9 +42,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
-
-// JWT configuration
-var key = Encoding.ASCII.GetBytes("Q3VzdG9tU2VjdXJlS2V5MTIzIT8kJV4mKigpXy0r");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,19 +53,20 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret)),
         ValidateIssuer = false,
         ValidateAudience = false
     };
 });
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddCoreAdmin(); // Optional: set admin password
-
+builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
+builder.Services.AddCoreAdmin();
 
 var app = builder.Build();
 
+// --- Middleware ---
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -69,52 +76,53 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
-
-
-app.UseCoreAdminCustomAuth(async (serviceProvider) =>
+// Redirect root "/" to "/panel"
+app.Use(async (context, next) =>
 {
-    var httpContext = serviceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext;
-    var authHeader = httpContext.Request.Headers["Authorization"].ToString();
-
-    if (authHeader?.StartsWith("Basic ") == true)
+    if (context.Request.Path == "/")
     {
-        var encodedCredentials = authHeader["Basic ".Length..].Trim();
-        var credentialBytes = Convert.FromBase64String(encodedCredentials);
-        var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
-
-        if (credentials.Length == 2)
-        {
-            var username = credentials[0];
-            var password = credentials[1];
-
-            if (username == "admin" && password == "admin")
-            {
-                return true;
-            }
-        }
+        context.Response.Redirect("/panel");
+        return;
     }
-
-    httpContext.Response.Headers["WWW-Authenticate"] = "Basic realm=\"AdminPanel\"";
-    httpContext.Response.StatusCode = 401;
-    await httpContext.Response.WriteAsync("Unauthorized");
-    return false;
+    await next();
 });
 
-app.UseCoreAdminCustomUrl("adminpanel");
-
-
-app.UseCors("AllowReactFrontend");
-
+app.UseRouting();
+app.UseCors(corsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
+// --- Admin Auth Middleware ---
+app.UseCoreAdminCustomAuth(async services =>
+{
+    var httpContext = services.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var authHeader = httpContext?.Request.Headers["Authorization"].ToString();
 
+    if (authHeader?.StartsWith("Basic ") == true)
+    {
+        var credentials = Encoding.UTF8
+            .GetString(Convert.FromBase64String(authHeader["Basic ".Length..].Trim()))
+            .Split(':', 2);
+
+        if (credentials is [adminUsername, adminPassword])
+            return true;
+    }
+
+    if (httpContext != null)
+    {
+        httpContext.Response.Headers["WWW-Authenticate"] = "Basic realm=\"AdminPanel\"";
+        httpContext.Response.StatusCode = 401;
+        await httpContext.Response.WriteAsync("Unauthorized");
+    }
+
+    return false;
+});
+
+app.UseCoreAdminCustomUrl("panel");
+
+// --- Route Mapping ---
 app.MapControllers();
 app.MapRazorPages();
-
-app.UseStaticFiles();
-app.MapDefaultControllerRoute();
 
 app.MapControllerRoute(
     name: "default",

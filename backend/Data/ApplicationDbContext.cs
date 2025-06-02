@@ -1,4 +1,5 @@
 ﻿using DocScanner.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,15 @@ namespace DocScanner.Data
         {
         }
 
-        public DbSet<RomanianIdRecord> RomanianIds { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<RomanianId>()
+                .HasOne<IdentityUser>(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId);
+        }
+
+        public DbSet<RomanianId> RomanianIds { get; set; }
     }
 }
