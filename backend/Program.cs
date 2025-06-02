@@ -66,6 +66,10 @@ builder.Services.AddCoreAdmin();
 
 var app = builder.Build();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine("Connection string: " + connectionString);
+
+
 // --- Middleware ---
 if (!app.Environment.IsDevelopment())
 {
@@ -131,6 +135,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "auth",
     pattern: "auth/{controller=Auth}/{action=Index}/{id?}");
+
 
 app.Logger.LogInformation("✅ Application started and routes are mapped.");
 

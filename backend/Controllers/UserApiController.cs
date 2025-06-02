@@ -17,16 +17,20 @@ public class UserApiController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IdCardParserService _parserService;
+    private readonly IConfiguration _configuration;
 
     public UserApiController(
         ApplicationDbContext context,
         IHttpClientFactory httpClientFactory,
-        IdCardParserService parserService)
+        IdCardParserService parserService,
+        IConfiguration configuration)
     {
         _context = context;
         _httpClientFactory = httpClientFactory;
         _parserService = parserService;
+        _configuration = configuration;
     }
+
 
     [HttpPost("upload")]
     public async Task<IActionResult> Upload([FromForm] IFormFile? photo)
@@ -50,7 +54,9 @@ public class UserApiController : ControllerBase
         await using var stream = photo.OpenReadStream();
         content.Add(new StreamContent(stream), "photo", photo.FileName);
 
-        var response = await client.PostAsync("http://localhost:8000/ocr", content);
+        string ocrServiceUrl = _configuration["OcrService:Url"] ?? "http://localhost:8000/ocr";
+
+        var response = await client.PostAsync(ocrServiceUrl, content);
         if (!response.IsSuccessStatusCode)
             return StatusCode(500, "Failed to OCR image.");
 
