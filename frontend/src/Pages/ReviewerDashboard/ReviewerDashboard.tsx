@@ -1,47 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Container } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef  } from '@mui/x-data-grid';
 import './ReviewerDashboard.scss';
-
-interface RomanianIdRecord {
-  id: number;
-  nume?: string;
-  prenume?: string;
-  cnp?: string;
-  cetatenie?: string;
-  sex?: string;
-  dataNasterii?: string;
-  validitate?: string;
-  domiciliu?: string;
-  serie?: string;
-  numar?: string;
-  locNastere?: string;
-}
+import { RomanianIdRecord } from "../../Services/Types";
+import { fetchReviewerRecords } from "../../Services/ReviewerService";
 
 function ReviewerDashboard() {
   const [rows, setRows] = useState<RomanianIdRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRecords = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5099/api/reviewerapi/records', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setRows(response.data);
-      } catch (error) {
-        console.error('Failed to fetch records:', error);
-      } finally {
-        setLoading(false);
+    const loadRecords = async () => {
+      const data = await fetchReviewerRecords();
+      if (data) {
+        setRows(data);
       }
+      setLoading(false);
     };
-
-    fetchRecords();
+    loadRecords();
   }, []);
 
   const columns: GridColDef[] = [
