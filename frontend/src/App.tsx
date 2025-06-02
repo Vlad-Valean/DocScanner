@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useState } from 'react';
+import React, { JSX } from 'react';
 import './App.scss';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
@@ -8,12 +8,10 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import ReviewerDashboard from './Pages/ReviewerDashboard/ReviewerDashboard';
 import UploadPage from './Pages/UploadPage/UploadPage';
-import {ThemeProvider, createTheme, useColorScheme} from '@mui/material/styles';
+import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {Paper} from "@mui/material";
+import {useAuth} from "./Services/AuthService";
 
-
-
-type Role = 'User' | 'Reviewer' | 'Admin' | null;
 
 type PrivateRouteProps = {
   children: JSX.Element;
@@ -24,7 +22,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/" />;
 };
 
-
 function App() {
   const theme = createTheme({
     colorSchemes: {
@@ -32,29 +29,7 @@ function App() {
     },
   });
 
-  const { mode } = useColorScheme();
-
-  useEffect(() => {
-    document.body.classList.remove('light', 'dark');
-    document.body.classList.add(mode ?? 'light');
-  }, [mode]);
-
-  const [role, setRole] = useState<Role>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      const storedRole = localStorage.getItem('role');
-      setIsAuthenticated(!!token);
-      setRole(storedRole ? storedRole as Role : 'User');
-    };
-
-    checkAuth();
-
-    window.addEventListener('storageChanged', checkAuth);
-    return () => window.removeEventListener('storageChanged', checkAuth);
-  }, []);
+  const { isAuthenticated, role, updateAuth } = useAuth();
 
   return (
     <ThemeProvider theme={theme}>
@@ -63,8 +38,8 @@ function App() {
         <Paper color="default">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login onAuthUpdate={updateAuth}/>} />
+            <Route path="/register" element={<Register onAuthUpdate={updateAuth}/>} />
             <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><ReviewerDashboard /></PrivateRoute>} />
           </Routes>

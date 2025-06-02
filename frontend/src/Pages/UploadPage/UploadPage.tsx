@@ -1,9 +1,10 @@
 import React, { ChangeEvent, useState } from "react";
-import axios from "axios";
 import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import { Paper, Box, Button, Container, TextField, styled } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
+import { uploadIdPhoto } from "../../Services/UploadService";
+
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -34,34 +35,20 @@ function UploadPage() {
   };
 
   const handleUpload = async () => {
-    if (!photo) return;
+    if (!photo || !token) return;
+
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("photo", photo);
+    const result = await uploadIdPhoto(photo, token);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5099/api/UserApi/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setMessage({ value: "Upload successful! ID data parsed.", success: true });
-      console.log("Parsed OCR data:", response.data);
-      setOcrData(response.data); // expected format: { name: "...", cnp: "...", ... }
-
-    } catch (error) {
-      console.error("Upload error:", error);
-      setMessage({ value: "Upload failed. Please try again.", success: false });
-    } finally {
-      setLoading(false);
+    if (result.success && result.data) {
+      setMessage({ value: result.message, success: true });
+      setOcrData(result.data); // expected parsed data
+    } else {
+      setMessage({ value: result.message, success: false });
     }
+
+    setLoading(false);
   };
 
   const handleFieldChange = (key: string, value: string) => {

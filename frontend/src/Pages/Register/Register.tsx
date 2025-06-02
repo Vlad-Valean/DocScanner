@@ -3,42 +3,40 @@ import './Register.scss';
 import { Container, FormControl, FormHelperText, Input, InputLabel, Link } from "@mui/material";
 import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import CustomButton from '../../Components/CustomButton/CustomButton';
-import axios from 'axios';
+import {registerUser} from "../../Services/AuthService";
+import {useNavigate} from "react-router-dom";
 
-function Register() {
+type RegisterProps = {
+  onAuthUpdate: () => void;
+};
+function Register({ onAuthUpdate }: RegisterProps) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const API_URL = 'http://localhost:5099/auth'; // Adjust your backend URL and port here
-
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    const result = await registerUser(email, password, confirmPassword, onAuthUpdate);
 
-    try {
-      const response = await axios.post(`${API_URL}/register`, {
-        email,
-        password,
-        confirmPassword
-      });
-
+    if (!result.success) {
+      setError(result.message);
+      setSuccess(false);
+    } else {
       setSuccess(true);
+      setError('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-    } catch (err: any) {
-      setError(err.response?.data || 'Registration failed');
+      alert("Successfully registered and logged in!");
+      navigate('/');
     }
-  };
+  }
 
   return (
     <Container fixed className="Register d-flex flex-column justify-content-center align-content-center min-vh-100">

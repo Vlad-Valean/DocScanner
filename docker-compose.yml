@@ -40,34 +40,34 @@ services:
     networks:
       - docscanner-net
 
-  docscanner-backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: docscanner-backend
-    ports:
-      - "5099:5099"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:5099
-    depends_on:
-      - postgres
-      - docscanner-ocr
-    networks:
-      - docscanner-net
-
-  docscanner-frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: docscanner-frontend
-    ports:
-      - "3000:3000"
-    restart: always
-    depends_on:
-      - docscanner-backend
-    networks:
-      - docscanner-net
+#  docscanner-backend:
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    container_name: docscanner-backend
+#    ports:
+#      - "5099:5099"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#      - ASPNETCORE_URLS=http://+:5099
+#    depends_on:
+#      - postgres
+#      - docscanner-ocr
+#    networks:
+#      - docscanner-net
+#
+#  docscanner-frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: docscanner-frontend
+#    ports:
+#      - "3000:3000"
+#    restart: always
+#    depends_on:
+#      - docscanner-backend
+#    networks:
+#      - docscanner-net
 
 volumes:
   postgres_data:
