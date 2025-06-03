@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Claims;
 using System.Text.Json;
 using DocScanner.Data;
@@ -6,6 +5,7 @@ using DocScanner.Models;
 using DocScanner.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DocScanner.Controllers;
 
@@ -69,5 +69,41 @@ public class UserApiController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(record);
+    }
+
+    [HttpPost("update")]
+    public async Task<IActionResult> Update([FromBody] RomanianId updatedRecord)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+            return Unauthorized("User ID not found.");
+
+        var existingRecord = await _context.RomanianIds
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.Id == updatedRecord.Id);
+
+        if (existingRecord == null)
+            return NotFound("Record not found for user.");
+
+        // Optional validation
+        if (updatedRecord.Serie?.Length != 2 || updatedRecord.Numar?.Length != 6)
+            return BadRequest("Invalid ID data.");
+
+        // Update actual fields
+        existingRecord.Nume = updatedRecord.Nume;
+        existingRecord.Prenume = updatedRecord.Prenume;
+        existingRecord.Cnp = updatedRecord.Cnp;
+        existingRecord.Cetatenie = updatedRecord.Cetatenie;
+        existingRecord.Sex = updatedRecord.Sex;
+        existingRecord.DataNasterii = updatedRecord.DataNasterii;
+        existingRecord.Validitate = updatedRecord.Validitate;
+        existingRecord.Domiciliu = updatedRecord.Domiciliu;
+        existingRecord.Serie = updatedRecord.Serie;
+        existingRecord.Numar = updatedRecord.Numar;
+        existingRecord.LocNastere = updatedRecord.LocNastere;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(existingRecord);
     }
 }

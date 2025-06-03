@@ -3,7 +3,7 @@ import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import { Paper, Box, Button, Container, TextField, styled } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
-import { uploadIdPhoto } from "../../Services/UploadService";
+import { uploadIdPhoto, updateIdData } from "../../Services/UploadService";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -49,6 +49,20 @@ function UploadPage() {
     }
 
     setLoading(false);
+  };
+
+  const handleUpdate = async () => {
+    console.log("OCR Data Keys:", Object.keys(ocrData));
+    console.log("OCR Data:", ocrData);
+
+    if (!token || !ocrData.id) {
+      setMessage({ value: "Missing token or ID.", success: false });
+      return;
+    }
+
+    const result = await updateIdData(ocrData, token);
+
+    setMessage({ value: result.message, success: result.success });
   };
 
   const handleFieldChange = (key: string, value: string) => {
@@ -109,6 +123,15 @@ function UploadPage() {
                 />
               ))}
             </div>
+            <Button
+              variant="contained"
+              color="primary"
+              className="w-100 mt-3"
+              startIcon={<SaveIcon />}
+              onClick={handleUpdate}
+            >
+              Save Changes
+            </Button>
         </Paper>
       </Box>
       }
