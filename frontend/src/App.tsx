@@ -8,6 +8,7 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import ReviewerDashboard from './Pages/ReviewerDashboard/ReviewerDashboard';
 import UploadPage from './Pages/UploadPage/UploadPage';
+import Account from './Pages/Account/Account';
 import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {Paper} from "@mui/material";
 import {useAuth} from "./Services/AuthService";
@@ -40,6 +41,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login onAuthUpdate={updateAuth}/>} />
             <Route path="/register" element={<Register onAuthUpdate={updateAuth}/>} />
+            <Route path="/account" element={<PrivateRoute><Account /></PrivateRoute>} />
             <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><ReviewerDashboard /></PrivateRoute>} />
           </Routes>

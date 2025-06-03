@@ -22,5 +22,6 @@ namespace DocScanner.Data
         }
 
         public DbSet<RomanianId> RomanianIds { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
     }
 }

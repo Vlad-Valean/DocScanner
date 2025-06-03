@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import CustomAlert from "../../Components/CustomAlert/CustomAlert";
-import { Paper, Box, Button, Container, TextField, styled } from "@mui/material";
+import { Paper, Box, Button, Container, TextField, styled, Typography } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
 import { uploadIdPhoto, updateIdData } from "../../Services/UploadService";
@@ -71,7 +71,9 @@ function UploadPage() {
 
   return (
     <Container fixed className="Upload d-flex flex-column justify-content-center align-content-center min-vh-100">
-      <h1 className="m-4 text-center">UPLOAD ID PHOTO</h1>
+      <Typography variant="h3" fontWeight="bold" gutterBottom>
+        Upload your id
+      </Typography>
       <Box className="m-auto w-50 d-flex flex-column align-items-center" textAlign="center" py={6}>
         <Paper elevation={3} sx={{ p: 3, textAlign: "center" }}>
           {photo && (

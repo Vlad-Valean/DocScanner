@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Tooltip, IconButton, Avatar, Menu, MenuItem, Typography } from '@mui/material';
-import { Setting } from '../../../Services/Types';
+import { MenuItemData } from '../../../Services/Types'
 
 
 type AvatarMenuProps = {
@@ -8,7 +8,7 @@ type AvatarMenuProps = {
   handleOpenUserMenu: (event: React.MouseEvent<HTMLElement>) => void;
   handleCloseUserMenu: () => void;
   handleMenuClick: (path: string) => void;
-  settings: Setting[];
+  settings: MenuItemData[];
 };
 
 const AvatarMenu = ({ settings, anchorElUser, handleCloseUserMenu, handleMenuClick, handleOpenUserMenu }: AvatarMenuProps) => {

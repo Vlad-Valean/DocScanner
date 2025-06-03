@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Register.scss';
-import { Container, FormControl, FormHelperText, Input, InputLabel, Link } from "@mui/material";
+import { Container, FormControl, FormHelperText, Input, InputLabel, Link, Typography } from "@mui/material";
 import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import {registerUser} from "../../Services/AuthService";
@@ -40,7 +40,9 @@ function Register({ onAuthUpdate }: RegisterProps) {
 
   return (
     <Container fixed className="Register d-flex flex-column justify-content-center align-content-center min-vh-100">
-      <h1 className="m-4">REGISTER</h1>
+      <Typography variant="h3" fontWeight="bold" gutterBottom>
+        Register
+      </Typography>
       <form onSubmit={handleRegister} className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">
         <FormControl variant="standard" margin="normal">
           <InputLabel htmlFor="email-input">Email</InputLabel>

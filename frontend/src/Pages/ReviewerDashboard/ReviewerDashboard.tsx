@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef  } from '@mui/x-data-grid';
 import './ReviewerDashboard.scss';
@@ -54,6 +54,9 @@ function ReviewerDashboard() {
 
   return (
     <Container fixed className="ReviewerDashboard d-flex flex-column justify-content-center align-content-center min-vh-100">
+      <Typography variant="h3" fontWeight="bold" gutterBottom>
+        Dashboard
+      </Typography>
       <h1 className="m-4">DASHBOARD</h1>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid

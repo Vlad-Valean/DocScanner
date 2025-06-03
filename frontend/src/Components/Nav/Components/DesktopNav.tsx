@@ -1,9 +1,10 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
+import { MenuItemData } from '../../../Services/Types'
 
 interface DesktopNavProps {
   handleMenuClick: (path: string) => void;
-  pages: { name: string; path: string }[];
+  pages: MenuItemData[];
 }
 
 const DesktopNav: React.FC<DesktopNavProps> = ({ handleMenuClick, pages }) => {

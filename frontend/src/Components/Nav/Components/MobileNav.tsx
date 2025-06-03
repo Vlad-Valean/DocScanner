@@ -1,14 +1,14 @@
 import React from 'react';
 import { IconButton, Menu, MenuItem, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import {Setting} from "../../../Services/Types";
+import { MenuItemData } from '../../../Services/Types'
 
 interface MobileNavProps {
   anchorElNav: HTMLElement | null;
   handleOpenNavMenu: (event: React.MouseEvent<HTMLElement>) => void;
   handleCloseNavMenu: () => void;
   handleMenuClick: (path: string) => void;
-  pages: Setting[];
+  pages: MenuItemData[];
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({ anchorElNav, handleOpenNavMenu, handleCloseNavMenu, handleMenuClick, pages }) => {

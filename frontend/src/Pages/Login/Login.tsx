@@ -7,6 +7,7 @@ import {
   Input,
   InputLabel,
   Link,
+  Typography
 } from '@mui/material';
 import CustomAlert from '../../Components/CustomAlert/CustomAlert';
 import CustomButton from '../../Components/CustomButton/CustomButton';
@@ -39,7 +40,9 @@ function Login({ onAuthUpdate }: LoginProps) {
 
   return (
     <Container fixed className="Login d-flex flex-column justify-content-center align-content-center min-vh-100">
-      <h1 className="m-4">LOGIN</h1>
+      <Typography variant="h3" fontWeight="bold" gutterBottom>
+        Login
+      </Typography>
       <form onSubmit={handleLogin}>
         <div className="d-flex flex-column justify-content-center align-content-center w-25 m-auto my-3">
           <FormControl variant="standard" className="mb-4">

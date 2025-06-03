@@ -13,7 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 const string adminUsername = "admin";
 const string adminPassword = "admin";
 const string corsPolicyName = "AllowReactFrontend";
-const string jwtSecret = "Q3VzdG9tU2VjdXJlS2V5MTIzIT8kJV4mKigpXy0r"; // Ideally from config
+var jwtSecret = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtSecret))
+{
+    throw new Exception("JWT secret is not configured. Please set Jwt:Key in appsettings.json.");
+}
 
 // --- Claim Mapping Fix ---
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
@@ -69,6 +73,15 @@ var app = builder.Build();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine("Connection string: " + connectionString);
 
+// --- Seed Roles, Admin, and MenuItems ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    await DbSeeder.SeedAsync(dbContext, userManager, roleManager);
+}
 
 // --- Middleware ---
 if (!app.Environment.IsDevelopment())
@@ -136,7 +149,6 @@ app.MapControllerRoute(
     name: "auth",
     pattern: "auth/{controller=Auth}/{action=Index}/{id?}");
 
-
 app.Logger.LogInformation("✅ Application started and routes are mapped.");
 
-app.Run();
+await app.RunAsync();

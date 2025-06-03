@@ -1,11 +1,5 @@
 export type Role = 'User' | 'Reviewer' | 'Admin' | null;
 
-export type Setting = {
-  name: string;
-  path: string;
-  roles: Role[];
-};
-
 export interface RomanianIdRecord {
   id: number;
   nume?: string;
@@ -19,4 +13,17 @@ export interface RomanianIdRecord {
   serie?: string;
   numar?: string;
   locNastere?: string;
+}
+
+export enum MenuType {
+  setting,
+  page
+}
+
+export interface MenuItemData {
+  id: number;
+  name: string;
+  path: string;
+  roles: string;
+  type: MenuType;
 }
