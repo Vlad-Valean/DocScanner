@@ -19,6 +19,7 @@ const Logo: React.FC<LogoProps> = ({ isMobile }) => (
       sx={{
         mr: 2,
         display: displayMode(isMobile),
+        flexGrow: isMobile ? 1 : 0,
         fontFamily: 'monospace',
         fontWeight: 700,
         letterSpacing: '.3rem',

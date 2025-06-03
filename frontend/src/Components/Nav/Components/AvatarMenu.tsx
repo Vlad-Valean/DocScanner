@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Tooltip, IconButton, Avatar, Menu, MenuItem, Typography } from '@mui/material';
-import { Setting } from '../../Services/Types';
+import { Setting } from '../../../Services/Types';
 
 
 type AvatarMenuProps = {

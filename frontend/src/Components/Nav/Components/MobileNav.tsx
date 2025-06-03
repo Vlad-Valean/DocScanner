@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton, Menu, MenuItem, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import {Setting} from "../../Services/Types";
+import {Setting} from "../../../Services/Types";
 
 interface MobileNavProps {
   anchorElNav: HTMLElement | null;

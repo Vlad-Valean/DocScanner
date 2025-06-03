@@ -5,11 +5,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import ThemeSwitch from '../ThemeSwitch/ThemeSwitch'
 import { Role, Setting } from '../../Services/Types'
-import MobileNav from './MobileNav';
-import DesktopNav from './DesktopNav';
-import AvatarMenu from "./AvatarMenu";
-import Logo from "./Logo"
-import {FALSE} from "sass";
+import MobileNav from './Components/MobileNav';
+import DesktopNav from './Components/DesktopNav';
+import AvatarMenu from "./Components/AvatarMenu";
+import Logo from "./Components/Logo"
 
 type NavProps = {
   role: Role;
