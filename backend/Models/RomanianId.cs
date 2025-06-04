@@ -18,4 +18,5 @@ public class RomanianId
     public string? Serie { get; set; }
     public string? Numar { get; set; }
     public string? LocNastere { get; set; }
+    public string? PhotoUrl { get; set; }
 }

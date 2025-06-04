@@ -74,8 +74,6 @@ public class AuthController : ControllerBase
     {
         var roles = await _userManager.GetRolesAsync(user);
 
-        Console.WriteLine("✔ Called GenerateJwtToken for user: " + user.Email); // Debug print
-
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),

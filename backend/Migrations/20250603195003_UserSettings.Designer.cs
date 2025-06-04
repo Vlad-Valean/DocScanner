@@ -3,6 +3,7 @@ using System;
 using DocScanner.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DocScanner.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603195003_UserSettings")]
+    partial class UserSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,9 +79,6 @@ namespace DocScanner.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Nume")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhotoUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("Prenume")

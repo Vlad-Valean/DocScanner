@@ -39,11 +39,6 @@ public class UserApiController : ControllerBase
             return BadRequest("No file uploaded.");
 
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        foreach (var claim in User.Claims)
-        {
-            Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
-        }
-
         if (userId == null)
         {
             return Unauthorized("User ID not found in token.");
@@ -64,6 +59,17 @@ public class UserApiController : ControllerBase
         var data = JsonSerializer.Deserialize<OcrResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var record = _parserService.ParseTextToIdRecord(data?.Text ?? string.Empty, userId);
+
+        var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        Directory.CreateDirectory(uploadsDir); // ensure folder exists
+
+        var uniqueFileName = $"{Guid.NewGuid()}_{photo.FileName}";
+        var filePath = Path.Combine(uploadsDir, uniqueFileName);
+
+        await using var fileStream = new FileStream(filePath, FileMode.Create);
+        await photo.CopyToAsync(fileStream);
+
+        record.PhotoUrl = $"/uploads/{uniqueFileName}";
 
         _context.RomanianIds.Add(record);
         await _context.SaveChangesAsync();

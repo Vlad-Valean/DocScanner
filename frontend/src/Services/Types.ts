@@ -27,3 +27,10 @@ export interface MenuItemData {
   roles: string;
   type: MenuType;
 }
+
+export type Theme = "System" | "Light" | "Dark";
+
+export interface UserSetting {
+  profilePictureUrl: string | null;
+  theme: Theme;
+}
