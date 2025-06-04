@@ -1,9 +1,10 @@
-import { Box, Container, Typography, Button } from '@mui/material';
+import { Box, Container, Typography, Button, FormControl, NativeSelect, InputLabel } from '@mui/material';
 import SecurityIcon from "@mui/icons-material/Security";
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import './Account.scss';
 import { getUserSettings, updateUserSettings, uploadProfilePicture } from "../../Services/UserSettingsService";
 import { UserSetting, Theme } from "../../Services/Types";
+import { useColorScheme } from '@mui/material/styles';
 
 function Account() {
   const [settings, setSettings] = useState<UserSetting>({
@@ -14,8 +15,12 @@ function Account() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const token = localStorage.getItem("token"); // adjust if needed
+  const { mode, setMode } = useColorScheme();
 
+
+
+
+  const token = localStorage.getItem("token"); // adjust if needed
   useEffect(() => {
     if (!token) return;
 
@@ -23,6 +28,8 @@ function Account() {
       .then(setSettings)
       .catch((err) => console.error("Failed to load settings:", err))
       .finally(() => setLoading(false));
+
+    setMode(settings.theme as 'system' | 'light' | 'dark');
   }, [token]);
 
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -42,85 +49,98 @@ function Account() {
     }
   }
 
+
+
   return (
-    <>
-      <Container fixed className="Account d-flex flex-column justify-content-center align-content-center">
-        <Box textAlign="center" py={0} className="min-vh-100 justify-content-center align-content-center">
-          <Typography variant="h3" fontWeight="bold" gutterBottom>
-            Account
+  <Container fixed className="Account d-flex flex-column justify-content-center align-content-center min-vh-100">
+    <Box textAlign="center" py={3}>
+      <Typography variant="h3" fontWeight="bold" gutterBottom>
+        Account
+      </Typography>
+
+      {!loading && (
+        <Box py={3}>
+          <Typography variant="h5" gutterBottom>
+            Preferences
           </Typography>
-        </Box>
 
-        {!loading && (
-          <Box textAlign="center" py={3}>
-            <Typography variant="h5" gutterBottom>
-              Preferences
-            </Typography>
+          <Box py={2}>
 
-            <Box py={2}>
-              <label>Theme: </label>
-              <select
-                value={settings.theme}
-                onChange={(e) =>
-                  setSettings({ ...settings, theme: e.target.value as Theme })
+            <FormControl>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Theme
+              </InputLabel>
+              <NativeSelect
+                defaultValue={'system'}
+                inputProps={{
+                  name: 'age',
+                  id: 'uncontrolled-native',
+                }}
+                value={mode}
+                onChange={(event) => {
+                    setSettings({ ...settings, theme: event.target.value.toUpperCase() as 'System' | 'Light' | 'Dark'});
+                    setMode(event.target.value as 'system' | 'light' | 'dark')
+                  }
                 }
               >
-                <option value="System">System</option>
-                <option value="Light">Light</option>
-                <option value="Dark">Dark</option>
-              </select>
-            </Box>
-
-            <Box py={2} display="flex" flexDirection="column" alignItems="center" gap={1}>
-              <label>Profile Picture:</label>
-              {settings.profilePictureUrl && (
-                <img
-                  src={settings.profilePictureUrl}
-                  alt="Profile"
-                  style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: '50%' }}
-                />
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                disabled={uploading}
-              />
-              {uploading && <Typography variant="body2">Uploading...</Typography>}
-            </Box>
-
-            <Button
-              variant="contained"
-              disabled={saving || uploading}
-              onClick={async () => {
-                setSaving(true);
-                try {
-                  if (token) await updateUserSettings(token, settings);
-                  alert("Settings updated!");
-                } catch (err) {
-                  console.error(err);
-                  alert("Failed to save settings");
-                } finally {
-                  setSaving(false);
-                }
-              }}
-              sx={{ mt: 2 }}
-            >
-              Save Preferences
-            </Button>
+                <option value="system" >System </option>
+                <option value="light" >Light </option>
+                <option value="dark" >Dark </option>
+              </NativeSelect>
+            </FormControl>
           </Box>
-        )}
 
-        {/* Privacy notice */}
-        <Box textAlign="center" py={3}>
-          <SecurityIcon color="action" />
-          <Typography variant="body2" color="textSecondary" mt={1}>
-            Your data is encrypted and securely handled. We never store your ID longer than necessary.
-          </Typography>
+          <Box py={2} display="flex" flexDirection="column" alignItems="center" gap={1}>
+            <label>Profile Picture:</label>
+            {settings.profilePictureUrl && (
+              <img
+                src={settings.profilePictureUrl}
+                alt="Profile"
+                style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: '50%' }}
+              />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={uploading}
+            />
+            {uploading && <Typography variant="body2">Uploading...</Typography>}
+          </Box>
+
+          <Button
+            variant="contained"
+            disabled={saving || uploading}
+            onClick={async () => {
+              setSaving(true);
+              try {
+                if (token) await updateUserSettings(token, settings);
+                alert("Settings updated!");
+              } catch (err) {
+                console.error(err);
+                alert("Failed to save settings");
+              } finally {
+                setSaving(false);
+              }
+            }}
+            sx={{ mt: 2 }}
+          >
+            Save Preferences
+          </Button>
         </Box>
-      </Container>
-    </>
+      )}
+
+      <Box textAlign="center" py={3}>
+        <SecurityIcon color="action" />
+        <Typography variant="body2" color="textSecondary" mt={1}>
+          Your data is encrypted and securely handled. We never store your ID longer than necessary.
+        </Typography>
+      </Box>
+    </Box>
+  </Container>
+
   );
+
 }
 
 export default Account;

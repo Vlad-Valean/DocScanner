@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import ThemeSwitch from '../ThemeSwitch/ThemeSwitch'
 import { Role, MenuItemData, MenuType } from '../../Services/Types'
 import MobileNav from './Components/MobileNav';
 import DesktopNav from './Components/DesktopNav';
@@ -82,8 +81,6 @@ function Nav({ role, isAuthenticated }: NavProps) {
             handleMenuClick={handleMenuClick}
             pages={pages}
           />
-
-          <ThemeSwitch/>
 
           <AvatarMenu
             anchorElUser={anchorElUser}
