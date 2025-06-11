@@ -28,7 +28,7 @@ export interface MenuItemData {
   type: MenuType;
 }
 
-export type Theme = "System" | "Light" | "Dark";
+export type Theme = "system" | "light" | "dark";
 
 export interface UserSetting {
   profilePictureUrl: string | null;

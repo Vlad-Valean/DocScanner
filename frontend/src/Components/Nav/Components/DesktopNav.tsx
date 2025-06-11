@@ -14,7 +14,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ handleMenuClick, pages }) => {
         <Button
           key={page.name}
           onClick={() => handleMenuClick(page.path)}
-          sx={{ my: 2, color: 'black', display: 'block' }}
+          sx={{ my: 2, color: 'inherit', display: 'block' }}
         >
           {page.name}
         </Button>

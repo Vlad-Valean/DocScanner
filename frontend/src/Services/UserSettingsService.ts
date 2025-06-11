@@ -29,6 +29,7 @@ export async function updateUserSettings(
     },
     body: JSON.stringify(settings),
   });
+  console.log(res)
 
   if (!res.ok) {
     throw new Error("Failed to update user settings");

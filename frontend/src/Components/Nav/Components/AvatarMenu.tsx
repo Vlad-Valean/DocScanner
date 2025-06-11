@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getUserSettings } from "../../../Services/UserSettingsService";
 import { Box, Tooltip, IconButton, Avatar, Menu, MenuItem, Typography } from '@mui/material';
 import { MenuItemData } from '../../../Services/Types'
+import { UserSetting } from "../../../Services/Types";
 
 
 type AvatarMenuProps = {
@@ -12,12 +14,25 @@ type AvatarMenuProps = {
 };
 
 const AvatarMenu = ({ settings, anchorElUser, handleCloseUserMenu, handleMenuClick, handleOpenUserMenu }: AvatarMenuProps) => {
+  const token = localStorage.getItem("token"); // adjust if needed
+  const API_URL = 'http://localhost:5099';
+  const [userSettings, setUserSettings] = useState<UserSetting>({
+    profilePictureUrl: '',
+    theme: 'dark',
+  });
+  useEffect(() => {
+    if (!token) return;
+    getUserSettings(token)
+      .then(setUserSettings)
+      .catch((err) => console.error("Failed to load settings:", err));
+  }, [token]);
 
+  console.log(userSettings);
   return (
     <Box sx={{ flexGrow: 0 }}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+          <Avatar alt="User Avatar" src={userSettings.profilePictureUrl ? API_URL + userSettings.profilePictureUrl : "/static/images/avatar/2.jpg"} />
         </IconButton>
       </Tooltip>
       <Menu

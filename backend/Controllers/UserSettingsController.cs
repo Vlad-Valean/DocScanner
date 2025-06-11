@@ -35,7 +35,7 @@ namespace DocScanner.Controllers
                 setting = new UserSetting
                 {
                     UserId = user.Id,
-                    Theme = Theme.System
+                    Theme = Theme.system
                 };
 
                 _context.UserSettings.Add(setting);
