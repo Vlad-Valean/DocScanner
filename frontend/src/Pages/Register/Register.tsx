@@ -1,39 +1,31 @@
 import React, { useState } from 'react';
 import './Register.scss';
 import { Container, FormControl, FormHelperText, Input, InputLabel, Link, Typography } from "@mui/material";
-import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import {registerUser} from "../../Services/AuthService";
 import {useNavigate} from "react-router-dom";
 
 type RegisterProps = {
   onAuthUpdate: () => void;
+  showAlert: (message: string, success?: boolean) => void;
 };
-function Register({ onAuthUpdate }: RegisterProps) {
+function Register({ onAuthUpdate, showAlert }: RegisterProps) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess(false);
 
     const result = await registerUser(email, password, confirmPassword, onAuthUpdate);
-
     if (!result.success) {
-      setError(result.message);
-      setSuccess(false);
+      showAlert(result.message, false);
     } else {
-      setSuccess(true);
-      setError('');
+      showAlert("Successfully registered and logged in!", true);
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      alert("Successfully registered and logged in!");
       navigate('/');
     }
   }
@@ -93,14 +85,6 @@ function Register({ onAuthUpdate }: RegisterProps) {
           You already have an account? Log in
         </Link>
       </form>
-
-      {(error || success) && (
-        <CustomAlert
-          response={success}
-          successResponse={'Successfully registered'}
-          errorResponse={"Error occurred"}
-        />
-      )}
     </Container>
   );
 }

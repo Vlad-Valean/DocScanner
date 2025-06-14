@@ -13,9 +13,10 @@ import { GetMenuItems } from "../../Services/MenuItemService"
 type NavProps = {
   role: Role;
   isAuthenticated: boolean;
+  userSettings: any;
 };
 
-function Nav({ role, isAuthenticated }: NavProps) {
+function Nav({ role, isAuthenticated, userSettings }: NavProps) {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -88,6 +89,7 @@ function Nav({ role, isAuthenticated }: NavProps) {
             handleCloseUserMenu={handleCloseUserMenu}
             handleMenuClick={handleMenuClick}
             settings={settings}
+            userSettings={userSettings}
           />
 
         </Toolbar>

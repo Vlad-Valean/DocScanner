@@ -1,22 +1,34 @@
 import React from 'react';
+import { Alert, Snackbar } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 import './CustomAlert.scss';
-import { Alert } from '@mui/material';
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
 
 type CustomAlertProps = {
+  open: boolean;
+  onClose: () => void;
   response: boolean;
-  successResponse: string;
-  errorResponse: string;
+  message: string;
+  duration?: number;
 };
-function CustomAlert({ response, successResponse, errorResponse }: CustomAlertProps) {
+
+function CustomAlert({ open, onClose, response, message, duration = 4000 }: CustomAlertProps) {
   return (
-    <Alert
-      icon={response ? <CheckIcon fontSize="inherit" /> : <ClearIcon fontSize="inherit" />}
-      severity={response ? "success" : "error"}
+    <Snackbar
+      open={open}
+      autoHideDuration={duration}
+      onClose={onClose}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
     >
-      {response ? successResponse : errorResponse}
-    </Alert>
+      <Alert
+        onClose={onClose}
+        severity={response ? 'success' : 'error'}
+        icon={response ? <CheckIcon fontSize="inherit" /> : <ClearIcon fontSize="inherit" />}
+        sx={{ width: '100%' }}
+      >
+        {message}
+      </Alert>
+    </Snackbar>
   );
 }
 

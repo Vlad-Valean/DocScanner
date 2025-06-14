@@ -21,6 +21,37 @@ namespace DocScanner.Controllers
             _userManager = userManager;
         }
 
+
+        private string EnumToTheme(Theme theme)
+        {
+            switch (theme)
+            {
+                case Theme.System:
+                    return "system";
+                case Theme.Light:
+                    return "light";
+                case Theme.Dark:
+                    return "dark";
+                default:
+                    return "system";
+            }
+        }
+
+        private Theme ThemeToEnum(string theme)
+        {
+            switch (theme)
+            {
+                case "system":
+                    return Theme.System;
+                case "light":
+                    return Theme.Light;
+                case "dark":
+                    return Theme.Dark;
+                default:
+                    return Theme.System;
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<UserSettingDto>> GetSettings()
         {
@@ -31,11 +62,10 @@ namespace DocScanner.Controllers
 
             if (setting == null)
             {
-                // Auto-create default setting if none exists
                 setting = new UserSetting
                 {
                     UserId = user.Id,
-                    Theme = Theme.system
+                    Theme = Theme.System
                 };
 
                 _context.UserSettings.Add(setting);
@@ -45,7 +75,7 @@ namespace DocScanner.Controllers
             return Ok(new UserSettingDto
             {
                 ProfilePictureUrl = setting.ProfilePictureUrl,
-                Theme = setting.Theme
+                Theme = EnumToTheme(setting.Theme)
             });
         }
 
@@ -63,14 +93,14 @@ namespace DocScanner.Controllers
             }
 
             setting.ProfilePictureUrl = dto.ProfilePictureUrl;
-            setting.Theme = dto.Theme;
+            setting.Theme = ThemeToEnum(dto.Theme.ToLower());
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpPost("upload-profile-picture")]
-        public async Task<IActionResult> UploadProfilePicture(IFormFile file, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile? file, [FromServices] IWebHostEnvironment env)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");

@@ -4,12 +4,9 @@ namespace DocScanner.Models
 {
     public enum Theme
     {
-        // ReSharper disable once InconsistentNaming
-        system,
-        // ReSharper disable once InconsistentNaming
-        light,
-        // ReSharper disable once InconsistentNaming
-        dark
+        System,
+        Light,
+        Dark
     }
 
     public class UserSetting
@@ -18,7 +15,7 @@ namespace DocScanner.Models
 
         public string? ProfilePictureUrl { get; set; }
 
-        public Theme Theme { get; set; } = Theme.system;
+        public Theme Theme { get; set; } = Theme.System;
 
         // Optional: Link to user if needed
         public string UserId { get; set; } = default!;

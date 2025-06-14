@@ -9,32 +9,27 @@ import {
   Link,
   Typography
 } from '@mui/material';
-import CustomAlert from '../../Components/CustomAlert/CustomAlert';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import {useNavigate} from "react-router-dom";
 import {loginUser} from "../../Services/AuthService";
 
 type LoginProps = {
   onAuthUpdate: () => void;
+  showAlert: (message: string, success?: boolean) => void;
 };
-function Login({ onAuthUpdate }: LoginProps) {
+function Login({ onAuthUpdate, showAlert }: LoginProps) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await loginUser(email, password, onAuthUpdate);
     if (!result.success) {
-      setError(result.message);
-      setSuccess(false);
+      showAlert(result.message, false);
     } else {
-      setError('');
-      setSuccess(true);
+      showAlert("Login successful!", true);
       navigate('/');
-      alert('Login successful!');
     }
   };
 
@@ -88,14 +83,6 @@ function Login({ onAuthUpdate }: LoginProps) {
           </Link>
         </div>
       </form>
-
-      {(error || success) && (
-        <CustomAlert
-          response={success}
-          successResponse={'Successfully logged in'}
-          errorResponse={"Error occurred"}
-        />
-      )}
     </Container>
   );
 }

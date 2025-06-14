@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useState } from "react";
-import CustomAlert from "../../Components/CustomAlert/CustomAlert";
 import { Paper, Box, Button, Container, TextField, styled, Typography } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
@@ -18,18 +17,20 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-function UploadPage() {
+type UploadProps = {
+  token: string | null;
+  showAlert: (message: string, success?: boolean) => void;
+};
+
+function UploadPage({token, showAlert}: UploadProps) {
   const [photo, setPhoto] = useState<File | null>(null);
-  const [message, setMessage] = useState({ value: "", success: true });
   const [loading, setLoading] = useState(false);
   const [ocrData, setOcrData] = useState<{ [key: string]: string }>({});
-
-  const token = localStorage.getItem("token");
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setPhoto(e.target.files[0]);
-      setMessage({ value: "", success: true });
+      showAlert("", true);
       setOcrData({});
     }
   };
@@ -42,27 +43,24 @@ function UploadPage() {
     const result = await uploadIdPhoto(photo, token);
 
     if (result.success && result.data) {
-      setMessage({ value: result.message, success: true });
+      showAlert(result.message, true);
       setOcrData(result.data); // expected parsed data
     } else {
-      setMessage({ value: result.message, success: false });
+      showAlert(result.message, false);
     }
 
     setLoading(false);
   };
 
   const handleUpdate = async () => {
-    console.log("OCR Data Keys:", Object.keys(ocrData));
-    console.log("OCR Data:", ocrData);
-
     if (!token || !ocrData.id) {
-      setMessage({ value: "Missing token or ID.", success: false });
+      showAlert("Missing token or ID.", false);
       return;
     }
 
     const result = await updateIdData(ocrData, token);
 
-    setMessage({ value: result.message, success: result.success });
+    showAlert(result.message, result.success);
   };
 
   const handleFieldChange = (key: string, value: string) => {
@@ -137,14 +135,6 @@ function UploadPage() {
         </Paper>
       </Box>
       }
-
-        {message.value && (
-          <CustomAlert
-            response={message.success}
-            successResponse={message.value}
-            errorResponse={message.value}
-          />
-        )}
     </Container>
   );
 }

@@ -13,6 +13,7 @@ export async function getUserSettings(token: string): Promise<UserSetting> {
   if (!res.ok) {
     throw new Error("Failed to fetch user settings");
   }
+  console.log(res)
 
   return res.json();
 }

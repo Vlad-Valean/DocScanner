@@ -6,7 +6,12 @@ import './ReviewerDashboard.scss';
 import { RomanianIdRecord } from "../../Services/Types";
 import { fetchReviewerRecords } from "../../Services/ReviewerService";
 
-function ReviewerDashboard() {
+
+type DashboardProps = {
+  token: string | null;
+};
+
+function ReviewerDashboard({token}: DashboardProps) {
   const [rows, setRows] = useState<RomanianIdRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
