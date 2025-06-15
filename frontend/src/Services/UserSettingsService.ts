@@ -1,5 +1,6 @@
-import axios from "axios";
 import { UserSetting } from "./Types"
+import { RomanianIdRecord } from './Types';
+import axios from 'axios';
 
 const API_URL = "http://localhost:5099/api/usersettings";
 
@@ -55,4 +56,21 @@ export async function uploadProfilePicture(token: string, file: File): Promise<s
 
   const data = await res.json();
   return data.imageUrl;
+}
+
+
+export async function fetchUserRecords(): Promise<RomanianIdRecord[] | null> {
+  try {
+    const token = localStorage.getItem('token') ?? '';
+    const response = await axios.get('http://localhost:5099/api/UserApi/records', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching reviewer records:', error);
+    return null;
+  }
 }

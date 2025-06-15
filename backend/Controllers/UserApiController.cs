@@ -112,4 +112,21 @@ public class UserApiController : ControllerBase
 
         return Ok(existingRecord);
     }
+
+
+    [HttpGet("records")]
+    public async Task<IActionResult> GetAllRecords()
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+            return Unauthorized("User ID not found.");
+
+        var records = await _context.RomanianIds
+            .Where(r => r.UserId == userId)
+            .ToListAsync();
+
+        return Ok(records);
+    }
+
 }
